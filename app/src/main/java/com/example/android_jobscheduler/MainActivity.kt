@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             .Builder(jobId, jobService)
 //            .setPeriodic(10000)
 //            .setOverrideDeadline(10000)
-            .setMinimumLatency(5000)
+//            .setMinimumLatency(5000)
 
             .build()
 
