@@ -28,12 +28,32 @@ class MyJobScheduler: JobService() {
 
     private val TAG = "MyJobScheduler"
 
+    /**
+     * This method gets called when job gets cancelled.
+     * Return True if you want to restart the job automatically when a condition is met (WIFI - ON)
+     * Return false if you want don't want to restart the job automatically even when the condition is met (WIFI - OFF)
+     * @param jobParameters
+     * @return
+     */
+
+    //On stop job Cancel JOb
     override fun onStopJob(params: JobParameters?): Boolean {
         Log.d(TAG,"Job Stopped")
         Toast.makeText(applicationContext, "Job Stopped", Toast.LENGTH_SHORT).show()
         return true
     }
 
+
+    /**
+     * Return FALSE when this jpb is of short duration
+     * and needs to be executed for very small time.
+     * By default everything here runs on UI thread. If you don't
+     * want to block the UI thread with long running work, then use thread.
+     * Return TRUE whenever you are running long running tasks. So when you are
+     * using a thread to do long running task, return true.
+     * @param jobParameters
+     * @return
+     */
     override fun onStartJob(params: JobParameters?): Boolean {
         //createNotificationChannel1()
 //        for (i in 1..10) {
@@ -41,6 +61,7 @@ class MyJobScheduler: JobService() {
 
 
         Executors.newSingleThreadExecutor().execute {
+           //Work to be done when the job starts
             doWork()
 
         }
@@ -64,6 +85,7 @@ class MyJobScheduler: JobService() {
 
 
 
+        //Job Finish and rescheduling job
         jobFinished(params,true)
         Toast.makeText(applicationContext, "Job Finished", Toast.LENGTH_SHORT).show()
         return true
@@ -71,27 +93,22 @@ class MyJobScheduler: JobService() {
     }
 
     private fun doWork() {
+
+        //Taking system minutes and checking if the current minute is even or odd
         if (currentmin%2 == 0){
-            createNotificationChannel1()
-//                val handler = Handler()
-//                handler.postDelayed({
-//                    createNotificationChannel2()
-////                    handler.postDelayed({
-////                        createNotificationChannel1()
-////                    }, 5000)
-//                }, 5000)
+
+            //Even,calling notification channel 1
+                createNotificationChannel1()
+
         }
         else{
+            //Odd,calling notification channel 2
             createNotificationChannel2()
-//            val handler = Handler()
-//            handler.postDelayed({
-//                createNotificationChannel1()
-//            }, 5000)
         }
 
     }
 
-
+  //Notification Channel 1
     private fun createNotificationChannel1() {
             val CHANNEL_ID = "channelID"
             val CHANNEL_NAME = "channel1"
@@ -105,6 +122,7 @@ class MyJobScheduler: JobService() {
                     lightColor = Color.GREEN
                     enableLights(true)
                 }
+                //Creating Notification Channel
                 val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 manager.createNotificationChannel(channel)
             }
